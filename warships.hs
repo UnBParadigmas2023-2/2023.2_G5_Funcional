@@ -8,7 +8,6 @@ import qualified Data.Map as Map
 import qualified Data.Map as Map
 
 
-
 instance Random Barco where
     randomR (a, b) g = case randomR (fromEnum a, fromEnum b) g of
         (x, g') -> (toEnum x, g')
@@ -117,17 +116,18 @@ main = do
 
     let pontuacaoInicial = inicializarPontuacao
     tabuleiroFinal <- foldM (\tab _ -> adicionarBarcoAleatoriamente tab) tabuleiroVazio [1..10]
-        
-    putStrLn "Bem Vindo ao Batalha Naval:"
+    putStrLn "---------------------------"    
+    putStrLn "\tBem Vindo ao Batalha Naval:"
+    putStrLn "---------------------------"    
+
     imprimirTabuleiro tabuleiroFinal
     
-    putStrLn "Digite 'sair' a qualquer momento para encerrar o jogo."
+    putStrLn "Digite 'sair' a qualquer momento para encerrar o jogo.\n"
     loop tabuleiroFinal pontuacaoInicial
     
 loop :: Tabuleiro -> Pontuacao -> IO ()
 loop tabuleiro pontuacao = do
-    putStrLn ("Pontuação: " ++ show (pontosPorBarco pontuacao)) 
-    putStrLn "Digite a coordenada (linha coluna) que deseja verificar (por exemplo, A 1, onde 'A' é a linha e '1' a coluna), ou digite 'revelar' para mostrar as coordenadas dos barcos ou 'sair' para finalizar a partida:"
+    putStrLn "Digite a coordenada (linha coluna) que deseja verificar (por exemplo, A 1, onde 'A' é a linha e '1' a coluna);\nOu digite 'revelar' para mostrar as coordenadas dos barcos;\nOu 'sair' para finalizar a partida:"
     hFlush stdout
     input <- getLine
     if input == "sair"
@@ -138,20 +138,33 @@ loop tabuleiro pontuacao = do
                 mostrarCoordenadasBarcos tabuleiro
                 loop tabuleiro pontuacao
             else do
-                let coordenadas = words input  
+                let coordenadas = words input
                 if length coordenadas /= 2
-                    then do 
-                        putStrLn "Entrada inválida. Digite a coordenada no formato correto. (por exemplo, A 1, onde 'A' é a linha e '1' a coluna)"
+                    then do
+                        putStrLn "\tEntrada inválida. Digite a coordenada no formato correto. (por exemplo, A 1, onde 'A' é a linha e '1' a coluna)\n"
                         hFlush stdout
                         loop tabuleiro pontuacao
-                        
                     else do
                         let [linha, colunaStr] = coordenadas
                             celula = obterCelula tabuleiro (head linha) colunaStr
-                            barco = case celula of
-                                Celula True _ tipoBarco -> show tipoBarco
-                                _ -> "Nenhum barco"
-                        putStrLn ("Na coordenada " ++ linha ++ " " ++ colunaStr ++ " está o barco: " ++ barco)
-                        hFlush stdout
-                        loop tabuleiro pontuacao
+                        case celula of
+                            Celula True _ tipoBarco -> do
+                                putStrLn ("\tNa coordenada " ++ linha ++ " " ++ colunaStr ++ " está o barco: " ++ show tipoBarco ++ "\n")
+                                hFlush stdout
+                                let novaPontuacao = afundarBarco tipoBarco pontuacao
+                                let somaPontuacao = sum (Map.elems (pontosPorBarco novaPontuacao))
+                                putStrLn ("============================================================================")
+                                putStrLn ("Sua Pontuação(Galeão vale 3, Fragata 2 e Jangada 1): " ++ show somaPontuacao)
+                                putStrLn ("============================================================================")
+                                loop tabuleiro novaPontuacao
+                            _ -> do
+                                    putStrLn ("-----------------------------------------------------------------")
+                                    putStrLn ("\tNa coordenada " ++ linha ++ " " ++ colunaStr ++ " não há barco.")
+                                    putStrLn ("-----------------------------------------------------------------")
+                                    let standPontuacao = sum (Map.elems (pontosPorBarco pontuacao))
+                                    putStrLn ("============================================================================")
+                                    putStrLn ("Sua Pontuação(Galeão vale 3, Fragata 2 e Jangada 1): " ++ show standPontuacao)
+                                    putStrLn ("============================================================================")
+                                    hFlush stdout
+                                    loop tabuleiro pontuacao
     
