@@ -3,6 +3,9 @@ import System.Random
 import Control.Monad (foldM)
 import System.IO (hFlush, stdout)
 import Control.Applicative ((<|>))
+-- Aqui
+import qualified Data.Map as Map
+import qualified Data.Map as Map
 
 
 
@@ -11,12 +14,37 @@ instance Random Barco where
         (x, g') -> (toEnum x, g')
     random g = randomR (minBound, maxBound) g
 
-data Barco = Galeao | Fragata | Jangada deriving (Show, Eq, Enum, Bounded)
+data Barco = Galeao | Fragata | Jangada deriving (Show, Eq, Enum, Bounded, Ord)
 
 valorPontos :: Barco -> Int
 valorPontos Galeao = 3
 valorPontos Fragata = 2
 valorPontos Jangada = 1
+
+-- Aqui
+data Pontuacao = Pontuacao
+    { pontosPorBarco :: Map.Map Barco Int
+    } deriving (Show)
+
+inicializarPontuacao :: Pontuacao
+inicializarPontuacao = Pontuacao
+    { pontosPorBarco = Map.fromList
+        [ (Galeao, 0)
+        , (Fragata, 0)
+        , (Jangada, 0)
+        ]
+    }
+
+afundarBarco :: Barco -> Pontuacao -> Pontuacao
+afundarBarco barco pontuacao = 
+    let pontosDoBarco = valorPontos barco
+        pontosAtuais = Map.lookup barco (pontosPorBarco pontuacao)
+        novosPontos = case pontosAtuais of
+            Just pontos -> pontos + pontosDoBarco
+            Nothing -> pontosDoBarco
+    in pontuacao { pontosPorBarco = Map.insert barco novosPontos (pontosPorBarco pontuacao) }
+--
+
 
 data Celula = NenhumBarco | Celula Bool Bool Barco  
 type Tabuleiro = [[Celula]]
@@ -86,18 +114,21 @@ mostrarCoordenadasBarcos tabuleiro = do
     
 main :: IO ()
 main = do
-        
+
+    let pontuacaoInicial = inicializarPontuacao
     tabuleiroFinal <- foldM (\tab _ -> adicionarBarcoAleatoriamente tab) tabuleiroVazio [1..10]
         
     putStrLn "Bem Vindo ao Batalha Naval:"
     imprimirTabuleiro tabuleiroFinal
     
     putStrLn "Digite 'sair' a qualquer momento para encerrar o jogo."
-    loop tabuleiroFinal
+    loop tabuleiroFinal pontuacaoInicial
     
-loop :: Tabuleiro -> IO ()
-loop tabuleiro = do
+loop :: Tabuleiro -> Pontuacao -> IO ()
+loop tabuleiro pontuacao = do
+    putStrLn ("Pontuação: " ++ show (pontosPorBarco pontuacao)) 
     putStrLn "Digite a coordenada (linha coluna) que deseja verificar (por exemplo, A 1, onde 'A' é a linha e '1' a coluna), ou digite 'revelar' para mostrar as coordenadas dos barcos ou 'sair' para finalizar a partida:"
+    hFlush stdout
     input <- getLine
     if input == "sair"
         then putStrLn "Jogo encerrado."
@@ -105,14 +136,14 @@ loop tabuleiro = do
             then do
                 putStrLn "Coordenadas dos barcos:"
                 mostrarCoordenadasBarcos tabuleiro
-                loop tabuleiro
+                loop tabuleiro pontuacao
             else do
                 let coordenadas = words input  
                 if length coordenadas /= 2
                     then do 
                         putStrLn "Entrada inválida. Digite a coordenada no formato correto. (por exemplo, A 1, onde 'A' é a linha e '1' a coluna)"
                         hFlush stdout
-                        loop tabuleiro
+                        loop tabuleiro pontuacao
                         
                     else do
                         let [linha, colunaStr] = coordenadas
@@ -122,6 +153,5 @@ loop tabuleiro = do
                                 _ -> "Nenhum barco"
                         putStrLn ("Na coordenada " ++ linha ++ " " ++ colunaStr ++ " está o barco: " ++ barco)
                         hFlush stdout
-                        loop tabuleiro
-    
+                        loop tabuleiro pontuacao
     
