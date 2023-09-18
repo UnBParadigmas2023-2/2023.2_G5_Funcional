@@ -91,6 +91,17 @@ obterCelula tabuleiro linha colunaStr =
         linhaIndex = ord linha - ord 'A'
     in (tabuleiro !! linhaIndex) !! (coluna - 1)
 
+marcarCelula :: Tabuleiro -> Char -> String -> Tabuleiro
+marcarCelula tabuleiro linha colunaStr =
+    let coluna = read colunaStr :: Int
+        linhaIndex = ord linha - ord 'A'
+        celulaAtual = (tabuleiro !! linhaIndex) !! (coluna - 1)
+        novaCelula = case celulaAtual of
+            Celula temNavio _ tipoBarco -> Celula temNavio True tipoBarco
+            _ -> celulaAtual
+        novaLinha = take (coluna - 1) (tabuleiro !! linhaIndex) ++ [novaCelula] ++ drop coluna (tabuleiro !! linhaIndex)
+    in take linhaIndex tabuleiro ++ [novaLinha] ++ drop (linhaIndex + 1) tabuleiro
+
 adicionarBarcoAleatoriamente :: Tabuleiro -> IO Tabuleiro
 adicionarBarcoAleatoriamente tabuleiro = do
     linha <- randomRIO ('A', 'L') 
@@ -146,9 +157,11 @@ loop tabuleiro pontuacao = do
                         loop tabuleiro pontuacao
                     else do
                         let [linha, colunaStr] = coordenadas
-                            celula = obterCelula tabuleiro (head linha) colunaStr
+                            celula = obterCelula tabuleiro (head linha) colunaStr                        
                         case celula of
                             Celula True _ tipoBarco -> do
+                                let novoTabuleiro = marcarCelula tabuleiro (head linha) colunaStr
+                                imprimirTabuleiro novoTabuleiro
                                 putStrLn ("\tNa coordenada " ++ linha ++ " " ++ colunaStr ++ " está o barco: " ++ show tipoBarco ++ "\n")
                                 hFlush stdout
                                 let novaPontuacao = afundarBarco tipoBarco pontuacao
@@ -167,4 +180,3 @@ loop tabuleiro pontuacao = do
                                     putStrLn ("============================================================================")
                                     hFlush stdout
                                     loop tabuleiro pontuacao
-    
