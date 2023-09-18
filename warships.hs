@@ -148,8 +148,7 @@ loop tabuleiro pontuacao = do
                 putStrLn "Coordenadas dos barcos:"
                 mostrarCoordenadasBarcos tabuleiro
                 loop tabuleiro pontuacao
-            else do
-                let coordenadas = words input
+            else let coordenadas = words input in
                 if length coordenadas /= 2
                     then do
                         putStrLn "\tEntrada inválida. Digite a coordenada no formato correto. (por exemplo, A 1, onde 'A' é a linha e '1' a coluna)\n"
@@ -157,7 +156,7 @@ loop tabuleiro pontuacao = do
                         loop tabuleiro pontuacao
                     else do
                         let [linha, colunaStr] = coordenadas
-                            celula = obterCelula tabuleiro (head linha) colunaStr                        
+                        let celula = obterCelula tabuleiro (head linha) colunaStr                        
                         case celula of
                             Celula True _ tipoBarco -> do
                                 let novoTabuleiro = marcarCelula tabuleiro (head linha) colunaStr
@@ -169,14 +168,30 @@ loop tabuleiro pontuacao = do
                                 putStrLn ("============================================================================")
                                 putStrLn ("Sua Pontuação(Galeão vale 3, Fragata 2 e Jangada 1): " ++ show somaPontuacao)
                                 putStrLn ("============================================================================")
-                                loop tabuleiro novaPontuacao
+                                loop novoTabuleiro novaPontuacao
                             _ -> do
-                                    putStrLn ("-----------------------------------------------------------------")
-                                    putStrLn ("\tNa coordenada " ++ linha ++ " " ++ colunaStr ++ " não há barco.")
-                                    putStrLn ("-----------------------------------------------------------------")
-                                    let standPontuacao = sum (Map.elems (pontosPorBarco pontuacao))
-                                    putStrLn ("============================================================================")
-                                    putStrLn ("Sua Pontuação(Galeão vale 3, Fragata 2 e Jangada 1): " ++ show standPontuacao)
-                                    putStrLn ("============================================================================")
-                                    hFlush stdout
-                                    loop tabuleiro pontuacao
+                                putStrLn ("-----------------------------------------------------------------")
+                                putStrLn ("\tNa coordenada " ++ linha ++ " " ++ colunaStr ++ " não há barco.")
+                                if verificarBarcoProximo tabuleiro (coordsParaIndices (unwords coordenadas))
+                                    then putStrLn "\tMas há um barco próximo!"
+                                    else return ()
+                                putStrLn ("-----------------------------------------------------------------")
+    
+                                let standPontuacao = sum (Map.elems (pontosPorBarco pontuacao))
+                                putStrLn ("============================================================================")
+                                putStrLn ("Sua Pontuação(Galeão vale 3, Fragata 2 e Jangada 1): " ++ show standPontuacao)
+                                putStrLn ("============================================================================")
+                                hFlush stdout
+                                loop tabuleiro pontuacao
+
+coordsParaIndices :: String -> (Int, Int)
+coordsParaIndices (letra:numero) = (ord letra - ord 'A', read numero - 1)
+
+verificarBarcoProximo :: Tabuleiro -> (Int, Int) -> Bool
+verificarBarcoProximo tabuleiro (i, j) = any temBarco vizinhos
+    where
+        offsets = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+        vizinhos = [(i + x, j + y) | (x, y) <- offsets, i + x >= 0, j + y >= 0, i + x < linhas, j + y < colunas]
+        temBarco (x, y) = case tabuleiro !! x !! y of
+            Celula True _ _ -> True
+            _               -> False
