@@ -45,7 +45,7 @@ inicializarPontuacao = Pontuacao
     }
 
 afundarBarco :: Barco -> Pontuacao -> Pontuacao
-afundarBarco barco pontuacao = 
+afundarBarco barco pontuacao =
     let pontosDoBarco = valorPontos barco
         pontosAtuais = Map.lookup barco (pontosPorBarco pontuacao)
         novosPontos = case pontosAtuais of
@@ -55,7 +55,7 @@ afundarBarco barco pontuacao =
 --
 
 
-data Celula = NenhumBarco | Celula Bool Bool Barco  
+data Celula = NenhumBarco | Celula Bool Bool Barco
 type Tabuleiro = [[Celula]]
 
 linhas = 12
@@ -67,9 +67,9 @@ escolherModoDeJogo = do
     putStrLn "Escolha o modo de jogo:"
     putStrLn "1. Jogo baseado em tempo"
     putStrLn "2. Jogo baseado em turnos"
-    
+
     escolha <- getLine
-    
+
     let pontuacaoInicial = inicializarPontuacao
     tabuleiroFinal <- foldM (\tab _ -> adicionarBarcoAleatoriamente tab) tabuleiroVazio [1..10]
     inicio <- getCurrentTime
@@ -87,12 +87,11 @@ escolherModoDeJogo = do
             putStrLn "Você escolheu jogar baseado em turnos."
             putStrLn "-----------------------------------------"
             putStrLn "Digite 'sair' a qualquer momento para encerrar o jogo.\n"
-            --loopTurnos tabuleiroFinal pontuacaoInicial
-            -- fazer logica por turnos no loop
-            
+            loopTurnos tabuleiroFinal pontuacaoInicial 0
+
         _ -> do
             putStrLn "Opção inválida. Por favor, escolha 1 ou 2."
-            escolherModoDeJogo -- Chama a função novamente em caso de escolha inválida
+            escolherModoDeJogo
 
 celulaVazia :: Celula
 celulaVazia = NenhumBarco
@@ -101,7 +100,7 @@ tabuleiroVazio :: Tabuleiro
 tabuleiroVazio = replicate linhas (replicate colunas celulaVazia)
 
 imprimirCelula :: Celula -> IO ()
-imprimirCelula NenhumBarco = putStr "~ "  
+imprimirCelula NenhumBarco = putStr "~ "
 imprimirCelula (Celula temNavio foiAtacada tipoBarco) = do
     if foiAtacada
         then if temNavio
@@ -112,8 +111,8 @@ imprimirCelula (Celula temNavio foiAtacada tipoBarco) = do
                     Jangada -> "J")
                 let valorBarco = valorPontos tipoBarco
                 putStr ("(" ++ show valorBarco ++ ")")
-            else putStr "X"  
-        else putStr "~ "  
+            else putStr "X"
+        else putStr "~ "
 
 imprimirTabuleiro :: Tabuleiro -> IO ()
 imprimirTabuleiro tabuleiro = do
@@ -147,15 +146,14 @@ marcarCelula tabuleiro linha colunaStr =
 
 adicionarBarcoAleatoriamente :: Tabuleiro -> IO Tabuleiro
 adicionarBarcoAleatoriamente tabuleiro = do
-    linha <- randomRIO ('A', 'L') 
-    coluna <- randomRIO (1, 12)  
-    barco <- randomIO  
+    linha <- randomRIO ('A', 'L')
+    coluna <- randomRIO (1, 12)
+    barco <- randomIO
     let linhaIndex = ord linha - ord 'A'
-    let novaCelula = Celula True False (if barco then Galeao else Fragata)  
+    let novaCelula = Celula True False (if barco then Galeao else Fragata)
     let linhaAtual = tabuleiro !! linhaIndex
     let novaLinha = take (coluna - 1) linhaAtual ++ [novaCelula] ++ drop coluna linhaAtual
     return $ take linhaIndex tabuleiro ++ [novaLinha] ++ drop (linhaIndex + 1) tabuleiro
-
 
 mostrarCoordenadasBarcos :: Tabuleiro -> IO ()
 mostrarCoordenadasBarcos tabuleiro = do
@@ -165,7 +163,6 @@ mostrarCoordenadasBarcos tabuleiro = do
                                                           _ -> False) coordenadas
     mapM_ (\(lin, col) -> putStrLn (lin : ' ' : show col)) coordenadasBarcos
 
-
 revelarTabuleiro :: Tabuleiro -> Tabuleiro
 revelarTabuleiro tabuleiro = map (map revelarCelula) tabuleiro
   where
@@ -173,16 +170,14 @@ revelarTabuleiro tabuleiro = map (map revelarCelula) tabuleiro
     revelarCelula (Celula temNavio _ tipoBarco) = Celula temNavio True tipoBarco
     revelarCelula celula = celula
 
-
-
 main :: IO ()
 main = do
-    putStrLn "------------------------------------------"    
+    putStrLn "------------------------------------------"
     putStrLn "\tBem Vindo ao Batalha Naval:"
     putStrLn "------------------------------------------"
-    
-    escolherModoDeJogo    
-    
+
+    escolherModoDeJogo
+
 loopTempo :: Tabuleiro -> Pontuacao -> UTCTime -> IO ()
 loopTempo tabuleiro pontuacao inicio = do
     putStrLn "Digite a coordenada (linha coluna) que deseja verificar (por exemplo, A 1, onde 'A' é a linha e '1' a coluna);\nOu digite 'revelar' para mostrar as coordenadas dos barcos;\nOu 'sair' para finalizar a partida:"
@@ -209,7 +204,6 @@ loopTempo tabuleiro pontuacao inicio = do
                     imprimirTabuleiro tabuleiroRevelado
                     loopTempo tabuleiroRevelado pontuacao inicio
 
-
                 else let coordenadas = words input in
                     if length coordenadas /= 2
                         then do
@@ -218,7 +212,7 @@ loopTempo tabuleiro pontuacao inicio = do
                             loopTempo tabuleiro pontuacao inicio
                         else do
                             let [linha, colunaStr] = coordenadas
-                            let celula = obterCelula tabuleiro (head linha) colunaStr  
+                            let celula = obterCelula tabuleiro (head linha) colunaStr
 
                             case celula of
                                 Celula True _ tipoBarco -> do
@@ -239,15 +233,78 @@ loopTempo tabuleiro pontuacao inicio = do
                                         then putStrLn "\tMas há um barco próximo!"
                                         else return ()
                                     putStrLn ("-----------------------------------------------------------------")
-        
                                     let standPontuacao = sum (Map.elems (pontosPorBarco pontuacao))
                                     putStrLn ("============================================================================")
                                     putStrLn ("Sua Pontuação(Galeão vale 3, Fragata 2 e Jangada 1): " ++ show standPontuacao)
                                     putStrLn ("============================================================================")
                                     hFlush stdout
                                     loopTempo tabuleiro pontuacao inicio
-    when(segundosDecorridos >= tempoMaximoSegundos) $ do
-        fimDeJogoTempo                       
+    when (segundosDecorridos >= tempoMaximoSegundos) $ do
+        fimDeJogoTempo
+
+loopTurnos :: Tabuleiro -> Pontuacao -> Int -> IO ()
+loopTurnos tabuleiro pontuacao turnos = do
+    putStrLn ("Digite a coordenada (linha coluna) que deseja verificar (por exemplo, A 1, onde 'A' é a linha e '1' a coluna)\n"
+             ++ " Ou digite 'revelar' para mostrar as coordenadas dos barcos\n"
+             ++ " Ou 'sair' para finalizar a partida:\n")
+    putStrLn ("==============================================================")
+    putStrLn ("Turnos Restantes: " ++ show (10 - turnos))
+    putStrLn ("==============================================================")
+    hFlush stdout
+
+    if turnos >= 10
+        then do
+            fimDeJogoTurnos
+        else do
+            input <- getLine
+            if input == "sair"
+                then do
+                    putStrLn "Jogo encerrado."
+                else if input == "revelar"
+                    then do
+                        putStrLn "Coordenadas dos barcos:"
+                        mostrarCoordenadasBarcos tabuleiro
+
+                        let tabuleiroRevelado = revelarTabuleiro tabuleiro
+                        putStrLn "Tabuleiro revelado:"
+                        imprimirTabuleiro tabuleiroRevelado
+                        loopTurnos tabuleiroRevelado pontuacao turnos
+                    else let coordenadas = words input in
+                        if length coordenadas /= 2
+                            then do
+                                putStrLn "\tEntrada inválida. Digite a coordenada no formato correto. (por exemplo, A 1, onde 'A' é a linha e '1' a coluna)\n"
+                                hFlush stdout
+                                loopTurnos tabuleiro pontuacao turnos
+                            else do
+                                let [linha, colunaStr] = coordenadas
+                                let celula = obterCelula tabuleiro (head linha) colunaStr
+
+                                case celula of
+                                    Celula True _ tipoBarco -> do
+                                        let novoTabuleiro = marcarCelula tabuleiro (head linha) colunaStr
+                                        imprimirTabuleiro novoTabuleiro
+                                        putStrLn ("\tNa coordenada " ++ linha ++ " " ++ colunaStr ++ " está o barco: " ++ show tipoBarco ++ "\n")
+                                        hFlush stdout
+                                        let novaPontuacao = afundarBarco tipoBarco pontuacao
+                                        let somaPontuacao = sum (Map.elems (pontosPorBarco novaPontuacao))
+                                        putStrLn ("============================================================================")
+                                        putStrLn ("Sua Pontuação(Galeão vale 3, Fragata 2 e Jangada 1): " ++ show somaPontuacao)
+                                        putStrLn ("============================================================================")
+                                        loopTurnos novoTabuleiro novaPontuacao (turnos + 1)
+                                    _ -> do
+                                        putStrLn ("-----------------------------------------------------------------")
+                                        putStrLn ("\tNa coordenada " ++ linha ++ " " ++ colunaStr ++ " não há barco.")
+                                        if verificarBarcoProximo tabuleiro (coordsParaIndices (unwords coordenadas))
+                                            then putStrLn "\tMas há um barco próximo!"
+                                            else return ()
+                                        putStrLn ("-----------------------------------------------------------------")
+                                        let standPontuacao = sum (Map.elems (pontosPorBarco pontuacao))
+                                        putStrLn ("============================================================================")
+                                        putStrLn ("Sua Pontuação(Galeão vale 3, Fragata 2 e Jangada 1): " ++ show standPontuacao)
+                                        putStrLn ("============================================================================")
+                                        hFlush stdout
+                                        loopTurnos tabuleiro pontuacao (turnos + 1)
+
 
 coordsParaIndices :: String -> (Int, Int)
 coordsParaIndices (letra:numero) = (ord letra - ord 'A', read numero - 1)
