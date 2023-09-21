@@ -121,7 +121,15 @@ mostrarCoordenadasBarcos tabuleiro = do
                                                           Celula True _ _ -> True
                                                           _ -> False) coordenadas
     mapM_ (\(lin, col) -> putStrLn (lin : ' ' : show col)) coordenadasBarcos
-    
+
+
+revelarTabuleiro :: Tabuleiro -> Tabuleiro
+revelarTabuleiro tabuleiro = map (map revelarCelula) tabuleiro
+  where
+    revelarCelula :: Celula -> Celula
+    revelarCelula (Celula temNavio _ tipoBarco) = Celula temNavio True tipoBarco
+    revelarCelula celula = celula
+
 main :: IO ()
 main = do
 
@@ -147,7 +155,15 @@ loop tabuleiro pontuacao = do
             then do
                 putStrLn "Coordenadas dos barcos:"
                 mostrarCoordenadasBarcos tabuleiro
-                loop tabuleiro pontuacao
+                --loop tabuleiro pontuacao
+
+
+                let tabuleiroRevelado = revelarTabuleiro tabuleiro
+                putStrLn "Tabuleiro revelado:"
+                imprimirTabuleiro tabuleiroRevelado
+                loop tabuleiroRevelado pontuacao
+
+
             else let coordenadas = words input in
                 if length coordenadas /= 2
                     then do
