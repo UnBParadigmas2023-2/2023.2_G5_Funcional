@@ -33,7 +33,7 @@ tempoDecorrido inicio atual = round $ realToFrac $ diffUTCTime atual inicio
 
 -- Tempo Maximo em segundos para jogo baseado em tempo
 tempoMaximoSegundos :: Int
-tempoMaximoSegundos = 10
+tempoMaximoSegundos = 180
 
 inicializarPontuacao :: Pontuacao
 inicializarPontuacao = Pontuacao
@@ -79,6 +79,7 @@ escolherModoDeJogo = do
             putStrLn "-----------------------------------------"
             putStrLn "Você escolheu jogar baseado em tempo."
             putStrLn "-----------------------------------------"
+            imprimirTabuleiro tabuleiroFinal
             putStrLn "Digite 'sair' a qualquer momento para encerrar o jogo.\n"
             loopTempo tabuleiroFinal pontuacaoInicial inicio
 
@@ -86,6 +87,7 @@ escolherModoDeJogo = do
             putStrLn "-----------------------------------------"
             putStrLn "Você escolheu jogar baseado em turnos."
             putStrLn "-----------------------------------------"
+            imprimirTabuleiro tabuleiroFinal
             putStrLn "Digite 'sair' a qualquer momento para encerrar o jogo.\n"
             loopTurnos tabuleiroFinal pontuacaoInicial 0
 
