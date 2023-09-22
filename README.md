@@ -4,7 +4,7 @@
 
 **Disciplina**: FGA0210 - PARADIGMAS DE PROGRAMAÇÃO - T01 <br>
 **Nro do Grupo (de acordo com a Planilha de Divisão dos Grupos)**: G5<br>
-**Paradigma**: Funcional<br>
+**Paradigma**: <br>
 
 ## Alunos
 |Matrícula | Aluno |
