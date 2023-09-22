@@ -4,18 +4,20 @@
 
 **Disciplina**: FGA0210 - PARADIGMAS DE PROGRAMAÇÃO - T01 <br>
 **Nro do Grupo (de acordo com a Planilha de Divisão dos Grupos)**: G5<br>
-**Paradigma**: <br>
+**Paradigma**: Funcional<br>
 
 ## Alunos
 |Matrícula | Aluno |
 | -- | -- |
 | 19/0094486  |  Pedro Henrique Nogueira |
 | 19/0088257  |  Guilherme Keyti Cabral Kishimoto|
+| 19/0093480  | Matheus Soares Arruda|
 
 ## Sobre 
-Descreva o seu projeto em linhas gerais. 
-Use referências, links, que permitam conhecer um pouco mais sobre o projeto.
-Capriche nessa seção, pois ela é a primeira a ser lida pelos interessados no projeto.
+
+"Warships" é um jogo de estratégia que oferece aos jogadores duas opções de modo de jogo: turno e tempo. No jogo, os jogadores enfrentam o desafio de acertar três tipos diferentes de barcos - fragata, jangada e galeão - como se fosse um "campo minado inverso". O objetivo principal do jogo é marcar a maior quantidade de pontos possível.<br>
+No modo de jogo "turno", os jogadores têm a oportunidade de planejar e pensar estrategicamente antes de realizar seus movimentos, escolhendo com cuidado onde atacar para maximizar seus pontos.<br>
+No modo de jogo "tempo", a pressão do tempo entra em cena, desafiando os jogadores a agir rapidamente e tomar decisões ágeis para acertar os barcos e acumular pontos valiosos dentro de um limite de tempo.<br>
 
 ## Screenshots
 Adicione 2 ou mais screenshots do projeto em termos de interface e/ou funcionamento.
@@ -46,7 +48,7 @@ TEMPO: +/- 15min
 Apresente, brevemente, como cada membro do grupo contribuiu para o projeto.
 |Nome do Membro | Contribuição | Significância da Contribuição para o Projeto (Excelente/Boa/Regular/Ruim/Nula) |
 | -- | -- | -- |
-| Fulano  |  Programação dos Fatos da Base de Conhecimento Lógica | Boa |
+| Matheus Soares | Eu fiquei responsável pelo ponta-pé inicial do projeto, fazendo funções como a do tabuleiro e criando os tipos de barcos. Também fui responsável por delegar algumas tarefas e prezei pela liberdade criativa do grupo. | Excelente |
 
 ## Outros 
 Quaisquer outras informações sobre o projeto podem ser descritas aqui. Não esqueça, entretanto, de informar sobre:
