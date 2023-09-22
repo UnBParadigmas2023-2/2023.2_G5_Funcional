@@ -55,7 +55,7 @@ afundarBarco barco pontuacao =
 --
 
 
-data Celula = NenhumBarco | Celula Bool Bool Barco
+data Celula = NenhumBarco | Celula Bool Bool Bool Barco
 type Tabuleiro = [[Celula]]
 
 linhas = 12
@@ -101,18 +101,19 @@ tabuleiroVazio = replicate linhas (replicate colunas celulaVazia)
 
 imprimirCelula :: Celula -> IO ()
 imprimirCelula NenhumBarco = putStr "~ "
-imprimirCelula (Celula temNavio foiAtacada tipoBarco) = do
+imprimirCelula (Celula temNavio foiAtacada afundado tipoBarco) = do
     if foiAtacada
         then if temNavio
             then do
                 putStr (case tipoBarco of
-                    Galeao -> "G"
-                    Fragata -> "F"
-                    Jangada -> "J")
+                    Galeao -> if afundado then "g" else "G"
+                    Fragata -> if afundado then "f" else "F"
+                    Jangada -> if afundado then "j" else "J")
                 let valorBarco = valorPontos tipoBarco
                 putStr ("(" ++ show valorBarco ++ ")")
             else putStr "X"
         else putStr "~ "
+
 
 imprimirTabuleiro :: Tabuleiro -> IO ()
 imprimirTabuleiro tabuleiro = do
@@ -139,7 +140,7 @@ marcarCelula tabuleiro linha colunaStr =
         linhaIndex = ord linha - ord 'A'
         celulaAtual = (tabuleiro !! linhaIndex) !! (coluna - 1)
         novaCelula = case celulaAtual of
-            Celula temNavio _ tipoBarco -> Celula temNavio True tipoBarco
+            Celula temNavio _ _ tipoBarco -> Celula temNavio True True tipoBarco
             _ -> celulaAtual
         novaLinha = take (coluna - 1) (tabuleiro !! linhaIndex) ++ [novaCelula] ++ drop coluna (tabuleiro !! linhaIndex)
     in take linhaIndex tabuleiro ++ [novaLinha] ++ drop (linhaIndex + 1) tabuleiro
@@ -150,7 +151,7 @@ adicionarBarcoAleatoriamente tabuleiro = do
     coluna <- randomRIO (1, 12)
     barco <- randomIO
     let linhaIndex = ord linha - ord 'A'
-    let novaCelula = Celula True False (if barco then Galeao else Fragata)
+    let novaCelula = Celula True False False (if barco then Galeao else Fragata)
     let linhaAtual = tabuleiro !! linhaIndex
     let novaLinha = take (coluna - 1) linhaAtual ++ [novaCelula] ++ drop coluna linhaAtual
     return $ take linhaIndex tabuleiro ++ [novaLinha] ++ drop (linhaIndex + 1) tabuleiro
@@ -158,16 +159,16 @@ adicionarBarcoAleatoriamente tabuleiro = do
 mostrarCoordenadasBarcos :: Tabuleiro -> IO ()
 mostrarCoordenadasBarcos tabuleiro = do
     let coordenadas = [(lin, col) | lin <- ['A'..'L'], col <- [1..12]]
-    let coordenadasBarcos = filter (\(lin, col) -> case obterCelula tabuleiro lin (show col) of
-                                                          Celula True _ _ -> True
-                                                          _ -> False) coordenadas
-    mapM_ (\(lin, col) -> putStrLn (lin : ' ' : show col)) coordenadasBarcos
+    let coordenadasBarcos = filter (\(lin, col) -> case obterCelula tabuleiro lin (show (col :: Int)) of
+                                                  Celula True _ _ _ -> True
+                                                  _ -> False) coordenadas
+    mapM_ (\(lin, col) -> putStrLn (lin : ' ' : show (col :: Int))) coordenadasBarcos
 
 revelarTabuleiro :: Tabuleiro -> Tabuleiro
 revelarTabuleiro tabuleiro = map (map revelarCelula) tabuleiro
   where
     revelarCelula :: Celula -> Celula
-    revelarCelula (Celula temNavio _ tipoBarco) = Celula temNavio True tipoBarco
+    revelarCelula (Celula temNavio _ afundado tipoBarco) = Celula temNavio True afundado tipoBarco
     revelarCelula celula = celula
 
 main :: IO ()
@@ -215,7 +216,7 @@ loopTempo tabuleiro pontuacao inicio = do
                             let celula = obterCelula tabuleiro (head linha) colunaStr
 
                             case celula of
-                                Celula True _ tipoBarco -> do
+                                Celula True _ False tipoBarco -> do
                                     let novoTabuleiro = marcarCelula tabuleiro (head linha) colunaStr
                                     imprimirTabuleiro novoTabuleiro
                                     putStrLn ("\tNa coordenada " ++ linha ++ " " ++ colunaStr ++ " está o barco: " ++ show tipoBarco ++ "\n")
@@ -226,6 +227,9 @@ loopTempo tabuleiro pontuacao inicio = do
                                     putStrLn ("Sua Pontuação(Galeão vale 3, Fragata 2 e Jangada 1): " ++ show somaPontuacao)
                                     putStrLn ("============================================================================")
                                     loopTempo novoTabuleiro novaPontuacao inicio
+                                Celula True _ True _ -> do
+                                        putStrLn "Você já atingiu este barco!"
+                                        loopTempo tabuleiro pontuacao inicio -- ou loopTurnos, dependendo da função
                                 _ -> do
                                     putStrLn ("-----------------------------------------------------------------")
                                     putStrLn ("\tNa coordenada " ++ linha ++ " " ++ colunaStr ++ " não há barco.")
@@ -280,7 +284,7 @@ loopTurnos tabuleiro pontuacao turnos = do
                                 let celula = obterCelula tabuleiro (head linha) colunaStr
 
                                 case celula of
-                                    Celula True _ tipoBarco -> do
+                                    Celula True _ False tipoBarco -> do
                                         let novoTabuleiro = marcarCelula tabuleiro (head linha) colunaStr
                                         imprimirTabuleiro novoTabuleiro
                                         putStrLn ("\tNa coordenada " ++ linha ++ " " ++ colunaStr ++ " está o barco: " ++ show tipoBarco ++ "\n")
@@ -291,6 +295,9 @@ loopTurnos tabuleiro pontuacao turnos = do
                                         putStrLn ("Sua Pontuação(Galeão vale 3, Fragata 2 e Jangada 1): " ++ show somaPontuacao)
                                         putStrLn ("============================================================================")
                                         loopTurnos novoTabuleiro novaPontuacao (turnos + 1)
+                                    Celula True _ True _ -> do
+                                        putStrLn "Você já atingiu este barco!"
+                                        loopTurnos tabuleiro pontuacao (turnos + 1)
                                     _ -> do
                                         putStrLn ("-----------------------------------------------------------------")
                                         putStrLn ("\tNa coordenada " ++ linha ++ " " ++ colunaStr ++ " não há barco.")
@@ -315,7 +322,7 @@ verificarBarcoProximo tabuleiro (i, j) = any temBarco vizinhos
         offsets = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
         vizinhos = [(i + x, j + y) | (x, y) <- offsets, i + x >= 0, j + y >= 0, i + x < linhas, j + y < colunas]
         temBarco (x, y) = case tabuleiro !! x !! y of
-            Celula True _ _ -> True
+            Celula True _ _ _ -> True
             _               -> False
 
 fimDeJogoTempo :: IO ()
