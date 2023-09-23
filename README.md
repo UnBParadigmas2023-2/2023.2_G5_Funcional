@@ -25,7 +25,8 @@ No modo de jogo "turno", os jogadores têm a oportunidade de planejar e pensar e
 No modo de jogo "tempo", a pressão do tempo entra em cena, desafiando os jogadores a agir rapidamente e tomar decisões ágeis para acertar os barcos e acumular pontos valiosos dentro de um limite de tempo.<br>
 
 ## Screenshots
-Adicione 2 ou mais screenshots do projeto em termos de interface e/ou funcionamento.
+![Jogo por tempo](./imgs/jogo1.png)
+![Função revelar](./imgs/jogo2.png)
 
 ## Instalação 
 **Linguagens**: Haskell<br>
@@ -44,11 +45,6 @@ E para executar:
 ```
 
 <br>
-
-## Uso 
-Explique como usar seu projeto.
-Procure ilustrar em passos, com apoio de telas do software, seja com base na interface gráfica, seja com base no terminal.
-Nessa seção, deve-se revelar de forma clara sobre o funcionamento do software.
 
 ## Vídeo
 Adicione 1 ou mais vídeos com a execução do projeto.
