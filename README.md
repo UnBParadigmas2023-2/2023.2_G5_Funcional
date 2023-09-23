@@ -31,7 +31,8 @@ No modo de jogo "tempo", a pressão do tempo entra em cena, desafiando os jogado
 ## Instalação 
 **Linguagens**: Haskell<br>
 **Tecnologias**: GHCI, Prelude<br>
-Para rodar o projeto basta  usar as seguintes linhas no bash:
+> PS: O prelude tem que estar instalado, e este tutorial é para máquinas linux.
+Para rodar o projeto basta clonar o repositório, entrar na pasta do projeto e usar as seguintes linhas no terminal:
 <br>
 ```bash
 ghc -o warships warships.hs
