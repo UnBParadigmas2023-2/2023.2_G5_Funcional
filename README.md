@@ -28,11 +28,22 @@ No modo de jogo "tempo", a pressão do tempo entra em cena, desafiando os jogado
 Adicione 2 ou mais screenshots do projeto em termos de interface e/ou funcionamento.
 
 ## Instalação 
-**Linguagens**: xxxxxx<br>
-**Tecnologias**: xxxxxx<br>
-Descreva os pré-requisitos para rodar o seu projeto e os comandos necessários.
-Insira um manual ou um script para auxiliar ainda mais.
-Gifs animados e outras ilustrações são bem-vindos!
+**Linguagens**: Haskell<br>
+**Tecnologias**: GHCI, Prelude<br>
+Para rodar o projeto basta  usar as seguintes linhas no bash:
+<br>
+```bash
+ghc -o warships warships.hs
+```
+<br>
+E para executar:
+<br>
+
+```bash
+./warships
+```
+
+<br>
 
 ## Uso 
 Explique como usar seu projeto.
