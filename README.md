@@ -9,10 +9,15 @@
 ## Alunos
 |Matrícula | Aluno |
 | -- | -- |
-| 19/0094486  |  Pedro Henrique Nogueira |
-| 19/0088257  |  Guilherme Keyti Cabral Kishimoto|
+| 19/0094486  | Pedro Henrique Nogueira |
+| 19/0088257  | Guilherme Keyti Cabral Kishimoto|
 | 19/0093480  | Matheus Soares Arruda|
-
+| 19/0084642  | Arthur Taylor|
+| 19/0088745  | Iago Cabral|
+| 19/0042532  | Felipe Alef|
+| 20/0042360  | Nicolas Roberto|
+| 19/0096071  | Thiago Oliveira|
+| 20/2063346  | José Filipi Brito|  
 ## Sobre 
 
 "Warships" é um jogo de estratégia que oferece aos jogadores duas opções de modo de jogo: turno e tempo. No jogo, os jogadores enfrentam o desafio de acertar três tipos diferentes de barcos - fragata, jangada e galeão - como se fosse um "campo minado inverso". O objetivo principal do jogo é marcar a maior quantidade de pontos possível.<br>
@@ -49,14 +54,18 @@ Apresente, brevemente, como cada membro do grupo contribuiu para o projeto.
 |Nome do Membro | Contribuição | Significância da Contribuição para o Projeto (Excelente/Boa/Regular/Ruim/Nula) |
 | -- | -- | -- |
 | Matheus Soares | Eu fiquei responsável pelo ponta-pé inicial do projeto, fazendo funções como a do tabuleiro e criando os tipos de barcos. Também fui responsável por delegar algumas tarefas e prezei pela liberdade criativa do grupo. | Excelente |
-
+| Pedro Henrique Nogueira | Função que coloca os barcos de forma aleatória no tabuleiro e a função que mostra as coordenadas dos barcos no tabuleiro. | Excelente |
+| Guilherme Keyti Cabral Kishimoto | Funções para dar dica de barco próximo | Excelente |
+| Arthur Taylor | Print para vizualização do mapa quando a função revelar é utilizada. | Excelente |
+| Iago Cabral | Funções e lógica de pontuação | Excelente |
+| Felipe Alef | Correção de bug de barco infinito. | Excelente |
+| Nicolas Roberto | Função que atualiza o mapa | Excelente |
+|  Thiago Oliveira |  Seletor de modo de jogo, e modo de jogo por tempo | Excelente |
+|  José Filipi Brito | Modo de jogo por turnos | Excelente |
 ## Outros 
-Quaisquer outras informações sobre o projeto podem ser descritas aqui. Não esqueça, entretanto, de informar sobre:
-(i) Lições Aprendidas;
-(ii) Percepções;
-(iii) Contribuições e Fragilidades, e
-(iV) Trabalhos Futuros.
+### Dificuldades e resultados
+Os integrantes do projeto relataram que enfrentaram desafios para aprender e utilizar a linguagem Haskell, que é diferente das linguagens convencionais e possui um paradigma funcional. Alguns deles disseram que tiveram que recorrer a outras linguagens, como C, para conseguir desenvolver suas ideias. Outros mencionaram que tiveram dificuldade para compreender a estrutura e a lógica do código já existente, e para identificar a funcionalidade adequada para implementar. Apesar dessas dificuldades, todos expressaram satisfação com o resultado final e com a experiência de trabalhar com uma linguagem nova e diferente.
 
 ## Fontes
-Referencie, adequadamente, as referências utilizadas.
-Indique ainda sobre fontes de leitura complementares.
+> SOARES, R. Aprenda Haskell: uma introdução prática à programação funcional. São Paulo: Novatec, 2019. 272 p.
+
